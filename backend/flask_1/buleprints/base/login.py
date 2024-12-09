@@ -38,10 +38,10 @@ def index():
     if request.method == "GET":
         return {"result":"success"}
     elif request.method == "POST":
-        re= LoginForm(request.args)
+        re= LoginForm(request.form)
         if re.validate():
-            username = request.args.get("username")
-            password = request.args.get("password")
+            username = request.form.get("username")
+            password = request.form.get("password")
             user= model.User.query.filter(model.User.username == username, model.User.password == password).first()
             if user:
                return {"result":"login success"}
