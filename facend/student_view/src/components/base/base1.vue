@@ -33,9 +33,9 @@ export default{
 <style>
     
     .base1_left{
-        width: 30vw;
+        width: 20vw;
         height: 100vh;
-        background-color: blue;
+        background-color: gray;
         float: left;
         position: fixed;
     }
@@ -43,7 +43,7 @@ export default{
         position: relative;
     }
     .base1_right{
-        width: 68vw;
+        width: 78vw;
         height: 100vh;
         float: right;
         position: relative;
@@ -51,7 +51,7 @@ export default{
         right: 0;
     }
     .base1_right .right_top{
-        width: 68vw;
+        width: 78vw;
         height: 15vh;
         background-color: red;
         position: fixed;
@@ -59,15 +59,19 @@ export default{
         top: 0;
     }
     .base1_right .right_bottom{
-        width: 68vw;
-        height: 85vh;
+        width: 100%;
         position: absolute;
         right: 0;
         top: 15vh;
         background-color: beige;
     }
     .base1_right .right_bottom .main_content{
-        transform: scale(0.7);
+        width: 100%;
         opacity: 0.85;
+    }
+
+
+    .active_router{
+        color: red;
     }
 </style>

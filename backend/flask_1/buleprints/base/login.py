@@ -1,4 +1,5 @@
 from flask import Blueprint,request,session
+from werkzeug.datastructures import MultiDict
 from wtforms import Form, StringField, IntegerField, validators,EmailField
 from wtforms.validators import ValidationError
 from flask_model import model
@@ -38,10 +39,10 @@ def index():
     if request.method == "GET":
         return {"result":"success"}
     elif request.method == "POST":
-        re= LoginForm(request.form)
+        re= LoginForm(MultiDict(request.get_json()))
         if re.validate():
-            username = request.form.get("username")
-            password = request.form.get("password")
+            username = request.get_json().get("username")
+            password = request.get_json().get("password")
             user= model.User.query.filter(model.User.username == username, model.User.password == password).first()
             if user:
                return {"result":"login success"}

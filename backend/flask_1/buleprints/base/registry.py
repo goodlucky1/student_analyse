@@ -1,4 +1,5 @@
 from flask import Blueprint,request,session
+from werkzeug.datastructures import MultiDict
 from wtforms import Form, StringField, IntegerField, validators,EmailField
 from wtforms.validators import ValidationError
 from flask import Blueprint
@@ -40,10 +41,10 @@ def index():
     if request.method == "GET":
         return {"result":"success"}
     elif request.method == "POST":
-        re = RegistryForm(request.form)
+        re = RegistryForm(MultiDict(request.get_json()))
         if re.validate():
-            user = model.User(username=request.form.get("username"), password=request.form.get("password"),
-                              email=request.form.get("email"), userRole=request.form.get("userRole"))
+            user = model.User(username=request.get_json().get("username"), password=request.get_json().get("password"),
+                              email=request.get_json().get("email"), userRole=request.get_json().get("userRole"))
             db.session.add(user)
             db.session.commit()
             return {"result":"success"}

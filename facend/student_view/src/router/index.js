@@ -1,15 +1,15 @@
 import LoginPage from "@/components/content/LoginPage.vue";
 import RegistryPage from "@/components/content/RegistryPage.vue";
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createMemoryHistory, createRouter, createWebHashHistory } from "vue-router";
 
 const router= createRouter({
-    history:createWebHashHistory(),
+    history:createMemoryHistory(),
     routes:[
         
         {
             name:"main",
             path:"/",
-            redirect:"/login"
+            component:LoginPage
         },
         {
             name:"login",
@@ -22,7 +22,8 @@ const router= createRouter({
             component:RegistryPage
         }
 
-    ]
+    ],
+    linkExactActiveClass:"active_router"
 })
 
 export default router

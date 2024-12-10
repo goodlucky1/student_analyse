@@ -4,12 +4,15 @@ from flask_dbobject.dbobject import db
 from flask_migrate import Migrate
 from buleprints.base.login import bp as login_bp
 from buleprints.base.registry import bp as registry_bp
+from flask_cors import CORS
 
 #所需依赖包 flask_migrate flask_sqlalchemy flask_cors pymysql flask-wtf
 app = Flask(__name__)
 #
 app.debug=True
 
+#允许跨域
+CORS(app)
 
 #app配置信息
 app.config.from_object(flask_config.config)

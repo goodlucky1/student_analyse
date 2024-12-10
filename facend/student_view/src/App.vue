@@ -1,4 +1,5 @@
 <template>
+  
   <base1></base1>
 </template>
 
@@ -15,5 +16,5 @@ export default {
 </script>
 
 <style>
-
+      @import '/src/assets/css/bootstrap.min.css';
 </style>
