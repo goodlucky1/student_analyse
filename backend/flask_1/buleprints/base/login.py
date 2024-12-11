@@ -1,4 +1,4 @@
-from flask import Blueprint,request,session
+from flask import Blueprint, request, session, jsonify
 from werkzeug.datastructures import MultiDict
 from wtforms import Form, StringField, IntegerField, validators,EmailField
 from wtforms.validators import ValidationError
@@ -45,7 +45,7 @@ def index():
             password = request.get_json().get("password")
             user= model.User.query.filter(model.User.username == username, model.User.password == password).first()
             if user:
-               return {"result":"login success"}
+                 return {"result":"login success"}
             return {"result":"login failed"}
         else:
             return re.errors

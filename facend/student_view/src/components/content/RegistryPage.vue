@@ -50,6 +50,9 @@
     </div>
 </template>
 <script>
+
+
+
 import axios from 'axios';
 
 export default{
@@ -71,7 +74,9 @@ export default{
             console.log(this.email)
             axios.post("api/registry", 
             {email:this.email,username:this.username,password:this.password,userRole:this.userRole},
-            {headers:{'Content-Type':'application/json'}}
+            {headers:{
+                'Content-Type':'application/json',
+                }}
         )
                 .then(x => {
                     console.log(x)

@@ -16,5 +16,5 @@ export default {
 </script>
 
 <style>
-      @import '/src/assets/css/bootstrap.min.css';
+    @import '/src/assets/css/bootstrap.min.css';
 </style>

@@ -1,3 +1,4 @@
+import FileUpload from "@/components/content/FileUpload.vue";
 import LoginPage from "@/components/content/LoginPage.vue";
 import RegistryPage from "@/components/content/RegistryPage.vue";
 import { createMemoryHistory, createRouter, createWebHashHistory } from "vue-router";
@@ -20,6 +21,11 @@ const router= createRouter({
             name:"registry",
             path:"/registry",
             component:RegistryPage
+        },
+        {
+            name:"fileUpload",
+            path:"/fileUpload",
+            component:FileUpload
         }
 
     ],

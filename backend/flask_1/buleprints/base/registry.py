@@ -1,4 +1,5 @@
-from flask import Blueprint,request,session
+from flask import Blueprint, request, session, make_response, g, jsonify
+from sqlalchemy.sql.functions import user
 from werkzeug.datastructures import MultiDict
 from wtforms import Form, StringField, IntegerField, validators,EmailField
 from wtforms.validators import ValidationError
@@ -7,6 +8,8 @@ from flask_model import model
 from flask_dbobject.dbobject import db
 
 bp = Blueprint('registry', __name__, url_prefix='/registry')
+
+
 
 class RegistryForm(Form):
     username=StringField("username", validators=[validators.Length(min=3, max=100, message="this length is 3 to 100"),validators.DataRequired("this is required")])
@@ -36,6 +39,8 @@ class RegistryForm(Form):
 
             raise ValidationError(str)
 
+
+
 @bp.route('/', methods=('GET', 'POST'))
 def index():
     if request.method == "GET":
@@ -47,6 +52,7 @@ def index():
                               email=request.get_json().get("email"), userRole=request.get_json().get("userRole"))
             db.session.add(user)
             db.session.commit()
+
             return {"result":"success"}
         else:
             return re.errors
