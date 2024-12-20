@@ -43,7 +43,7 @@ export default{
 
         },
         post(){
-            axios.post('api/login',
+            axios.post('/api/login',
             {username:this.username,password:this.password},
             {headers:{'Content-Type':'application/json'}}
         )

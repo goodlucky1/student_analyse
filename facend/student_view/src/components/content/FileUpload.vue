@@ -3,7 +3,7 @@
         <div class="mb-3">
             <label for="formFile" class="form-label">Default file input example</label>
             <input @change="(event)=>handelFileChange(event)" class="form-control" type="file" id="formFile">
-            <button type="button" class="btn btn-outline-primary" @click="uploadfile">登录</button>
+            <button type="button" class="btn btn-outline-primary" @click="uploadfile">上传</button>
         </div>
     </div>
 </template>
@@ -14,7 +14,12 @@ export default{
     name:"fileUpload",
     data(){
         return{
-            fileValue:""
+            fileValue:"",
+            data:{
+                "姓名":"123321",
+                "成绩":"321231"
+            }
+            
         }
     },
     methods:{
@@ -24,28 +29,39 @@ export default{
         },
         async uploadfile(){
             if(!this.fileValue){
-                alert("Please select a file first")
-                return
-            }
 
-           
-
-            try{
-                const formData = new FormData();
-                formData.append('file',this.fileValue)
-                
-
-             await  axios.post('api/getfile',
-                    formData,
-                    {headers:{'content-Type':'multipart/form-data'}}
-                ).then(res=>{
-                    console.log(2)
+                axios.post("api/getfile/insert",{
+                    "data":this.data,
+                    "tableName":"1734605430"
+                })
+                .then(res=>{
+                    console.log(res)
                 })
                 .catch(res=>{
                     console.log(res)
                 })
 
-                console.log(res)
+
+                alert("Please select a file first")
+                return
+            }
+            try{
+                const formData = new FormData();
+                formData.append('file',this.fileValue)
+
+                const request=axios.create({
+                    timeout:100000
+                })
+                
+             await  request.post('/api/getfile',
+                        formData,
+                    {headers:{'content-Type':'multipart/byteranges'}},
+                ).then(res=>{
+                    console.log(res)
+                })
+                .catch(res=>{
+                    console.log(res)
+                })
             }
             catch(error){
                 console.log(error)

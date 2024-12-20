@@ -11,7 +11,7 @@ module.exports = defineConfig({
     proxy: {
         '/api': {
             //对应的接口前缀，填入你对应的前缀，后面搭建Flask时会说明
-            target: 'http://10.10.116.210',//这里填入你要请求的接口的前缀
+            target: 'http://10.10.116.21:8000',//这里填入你要请求的接口的前缀
             ws:true,//代理websocked
             changeOrigin:true,//虚拟的站点需要更管origin
             secure: false,                   //是否https接口

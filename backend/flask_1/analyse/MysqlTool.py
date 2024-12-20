@@ -24,10 +24,32 @@ class MysqlTool(object):
         conn.close()
         con.close()
         return jsonobj
-dictconnect = {'host': '10.10.209.221',
-                   'user': 'root',
-                   'password': 'Password123$',
-                   'port': 3306,
-                   }
-# if __name__ == '__main__':
-#     MysqlTool('localhost', 'root', 'Password123$', '<PASSWORD>', 3306).selected(dictconnect)
+
+    def selected_header(self, sqlstr):
+        con = pymysql.connect(host=self.hostname, user=self.username, password=self.password)
+        conn = con.cursor()
+        conn.execute(sqlstr)
+        header = [i[0] for i in conn.description]
+        con.commit()
+        conn.close()
+        con.close()
+        return header
+
+    def insertd(self,sqlstr):
+        con = pymysql.connect(host=self.hostname, user=self.username, password=self.password)
+        conn = con.cursor()
+        res= conn.execute(sqlstr)
+        con.commit()
+        conn.close()
+        con.close()
+        return res
+
+    def updated_delete(self,sqlstr):
+        con = pymysql.connect(host=self.hostname, user=self.username, password=self.password)
+        conn = con.cursor()
+        res= conn.execute(sqlstr)
+        con.commit()
+        conn.close()
+        con.close()
+        return res
+
