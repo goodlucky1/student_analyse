@@ -14,7 +14,7 @@ body.global-background {
   padding: 0;
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #c8d9f8, #b8a8ff);
-  height: 100vh;
+  /* height: 100vh; */
   overflow: hidden;
 }
 </style>

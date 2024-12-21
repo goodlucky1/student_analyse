@@ -5,21 +5,23 @@
       <form @submit.prevent="handleLogin">
         <div class="input-group">
           <label for="username">用户名</label>
-          <input v-model="username" type="text" id="username" placeholder="请输入用户名" required />
+          <input v-model="username" type="text" id="username" placeholder="请输入用户名" required :disabled="isSubmitting" />
         </div>
         <div class="input-group">
           <label for="password">密码</label>
-          <input v-model="password" type="password" id="password" placeholder="请输入密码" required />
+          <input v-model="password" type="password" id="password" placeholder="请输入密码" required :disabled="isSubmitting" />
         </div>
-        <button type="submit" class="submit-btn">登录</button>
+        <button type="submit" class="submit-btn" :disabled="isSubmitting">登录</button>
       </form>
       <p>没有账户？<router-link to="/register">注册</router-link></p>
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { ElMessage } from 'element-plus';
 
 export default {
   mounted() {
@@ -31,16 +33,19 @@ export default {
       username: '',
       password: '',
       errorMessage: '',  // 用于存储错误信息
+      isSubmitting: false, // 是否正在提交
     };
   },
   methods: {
     async handleLogin() {
       // 清空之前的错误信息
       this.errorMessage = '';
+      this.isSubmitting = true; // 设置为提交中，禁用表单
 
       // 简单的表单验证
       if (!this.username || !this.password) {
         this.errorMessage = '用户名和密码不能为空';
+        this.isSubmitting = false;
         return;
       }
 
@@ -53,17 +58,19 @@ export default {
 
         // 登录成功后的处理
         if (response.data.success) {
-          alert('登录成功');
+          ElMessage.success('登录成功');
           this.$router.push("/home"); // 登录成功跳转到首页
         } else {
           // 登录失败的处理
           this.errorMessage = response.data.message || '登录失败，请检查用户名和密码';
-          alert("登录失败")
+          ElMessage.error(this.errorMessage);
         }
       } catch (error) {
         console.error('登录请求出错：', error);
-        alert("登录失败")
         this.errorMessage = '登录请求失败，请稍后再试';
+        ElMessage.error(this.errorMessage);
+      } finally {
+        this.isSubmitting = false; // 请求完成，恢复表单
       }
     }
   }
@@ -129,12 +136,23 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.submit-btn:hover {
+.submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.submit-btn:hover:enabled {
   background-color: #5149b2;
 }
 
 p {
   margin-top: 20px;
   color: #555;
+}
+
+.error-message {
+  color: #f56c6c;
+  margin-top: 15px;
+  font-size: 14px;
 }
 </style>

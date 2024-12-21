@@ -4,4 +4,8 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import { createMetaManager } from 'vue-meta'
-createApp(App).use(store).use(router).use(createMetaManager).mount('#app')
+import { ElMessage } from 'element-plus';
+import 'element-plus/dist/index.css';
+
+
+createApp(App).use(store).use(router).use(createMetaManager).use(ElMessage).mount('#app')

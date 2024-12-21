@@ -5,17 +5,17 @@
       <form @submit.prevent="handleRegister">
         <div class="input-group">
           <label for="username">用户名</label>
-          <input v-model="username" type="text" id="username" placeholder="请输入用户名" required />
+          <input v-model="username" type="text" id="username" placeholder="请输入用户名" required :disabled="isSubmitting" />
         </div>
         <div class="input-group">
           <label for="password">密码</label>
-          <input v-model="password" type="password" id="password" placeholder="请输入密码" required />
+          <input v-model="password" type="password" id="password" placeholder="请输入密码" required :disabled="isSubmitting" />
         </div>
         <div class="input-group">
           <label for="confirmPassword">确认密码</label>
-          <input v-model="confirmPassword" type="password" id="confirmPassword" placeholder="确认密码" required />
+          <input v-model="confirmPassword" type="password" id="confirmPassword" placeholder="确认密码" required :disabled="isSubmitting" />
         </div>
-        <button type="submit" class="submit-btn">注册</button>
+        <button type="submit" class="submit-btn" :disabled="isSubmitting">注册</button>
       </form>
       <p>已经有账户？<router-link to="/">登录</router-link></p>
     </div>
@@ -24,6 +24,7 @@
 
 <script>
 import axios from 'axios';
+import { ElMessage } from 'element-plus'; 
 
 export default {
   mounted() {
@@ -39,15 +40,23 @@ export default {
       username: '',
       password: '',
       confirmPassword: '',
+      isSubmitting: false, // 是否正在提交
     };
   },
   methods: {
     async handleRegister() {
-      // 检查密码是否匹配
-      if (this.password !== this.confirmPassword) {
-        alert('密码不匹配！');
+      // 检查是否有空字段
+      if (!this.username || !this.password || !this.confirmPassword) {
+        ElMessage.error('用户名、密码或确认密码不能为空');
         return;
       }
+      // 检查密码是否匹配
+      if (this.password !== this.confirmPassword) {
+        ElMessage.error('密码不匹配！');
+        return;
+      }
+
+      this.isSubmitting = true; // 设置为提交中，禁用表单
 
       try {
         // 发送注册请求到后端
@@ -58,14 +67,16 @@ export default {
 
         // 注册成功后的处理
         if (response.data.success) {
-          alert('注册成功！');
+          ElMessage.success('注册成功！');
           this.$router.push('/'); // 跳转到登录页面
         } else {
-          alert('注册失败：' + response.data.message);
+          ElMessage.error('注册失败：' + response.data.message);
         }
       } catch (error) {
         console.error('注册请求出错：', error);
-        alert('注册失败，请稍后再试');
+        ElMessage.error('注册失败，请稍后再试');
+      } finally {
+        this.isSubmitting = false; // 请求完成，恢复表单
       }
     },
   },
@@ -131,7 +142,12 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.submit-btn:hover {
+.submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.submit-btn:hover:enabled {
   background-color: #5149b2;
 }
 
