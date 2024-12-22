@@ -15,7 +15,19 @@
           <label for="confirmPassword">确认密码</label>
           <input v-model="confirmPassword" type="password" id="confirmPassword" placeholder="确认密码" required :disabled="isSubmitting" />
         </div>
-        <button type="submit" class="submit-btn" :disabled="isSubmitting">注册</button>
+        <div class="input-group">
+          <label for="email">邮箱</label>
+          <input v-model="email" type="email" id="email" placeholder="请输入邮箱" required :disabled="isSubmitting" />
+        </div>
+        <div class="input-group">
+          <label for="userRole">用户类型</label>
+          <select id="userRole" v-model="userRole" :disabled="isSubmitting">
+            <option value="管理员">管理员</option>
+            <option value="普通用户">普通用户</option>
+            <option value="未知用户">未知用户</option>
+          </select>
+        </div>
+        <button type="submit" class="submit-btn" :disabled="isSubmitting">{{ isSubmitting ? '注册中...' : '注册' }}</button>
       </form>
       <p>已经有账户？<router-link to="/">登录</router-link></p>
     </div>
@@ -24,15 +36,13 @@
 
 <script>
 import axios from 'axios';
-import { ElMessage } from 'element-plus'; 
+import { ElMessage } from 'element-plus';
 
 export default {
   mounted() {
-    // 设置全局背景
     document.body.classList.add("global-background");
   },
   beforeDestroy() {
-    // 清除全局背景样式
     document.body.classList.remove("global-background");
   },
   data() {
@@ -40,44 +50,38 @@ export default {
       username: '',
       password: '',
       confirmPassword: '',
-      isSubmitting: false, // 是否正在提交
+      email: '',
+      userRole: '',
+      isSubmitting: false,
     };
   },
   methods: {
     async handleRegister() {
-      // 检查是否有空字段
-      if (!this.username || !this.password || !this.confirmPassword) {
-        ElMessage.error('用户名、密码或确认密码不能为空');
-        return;
+      if (this.password != this.confirmPassword) {
+        ElMessage.error("两次密码不一致")
+        return
       }
-      // 检查密码是否匹配
-      if (this.password !== this.confirmPassword) {
-        ElMessage.error('密码不匹配！');
-        return;
-      }
-
-      this.isSubmitting = true; // 设置为提交中，禁用表单
-
-      try {
-        // 发送注册请求到后端
-        const response = await axios.post('http://localhost:3000/api/register', {
+      axios.post("api/registry",
+        {
           username: this.username,
           password: this.password,
-        });
-
-        // 注册成功后的处理
-        if (response.data.success) {
-          ElMessage.success('注册成功！');
-          this.$router.push('/'); // 跳转到登录页面
-        } else {
-          ElMessage.error('注册失败：' + response.data.message);
+          email: this.email,
+          userRole:this.userRole
         }
-      } catch (error) {
-        console.error('注册请求出错：', error);
-        ElMessage.error('注册失败，请稍后再试');
-      } finally {
-        this.isSubmitting = false; // 请求完成，恢复表单
-      }
+      ).then(res => {
+        console.log(res)
+        if(res.data.result=="success"){
+          ElMessage.success("成功")
+          this.$router.push("/")
+          return
+        }
+        ElMessage.error("注册失败")
+      })
+      .catch(res=>{
+        console.log(res)
+        ElMessage.error("ERROR")
+      })
+       
     },
   },
 };
@@ -90,6 +94,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background: linear-gradient(to bottom right, #6c63ff, #e0e7ff);
 }
 
 /* 表单框样式 */
@@ -97,37 +102,44 @@ export default {
   width: 90%;
   max-width: 400px;
   padding: 30px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 15px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  text-align: center;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .title {
   margin-bottom: 20px;
   font-size: 28px;
-  color: #4a4a4a;
+  color: #333;
   font-weight: bold;
+  text-align: center;
 }
 
 .input-group {
   margin-bottom: 20px;
   display: flex;
-  align-items: center; /* 垂直居中对齐 */
+  flex-direction: column;
 }
 
 .input-group label {
-  width: 100px;
-  text-align: right;
-  margin-right: 15px; /* 标签和输入框之间的间距 */
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #555;
 }
 
-.input-group input {
-  width: 100%;
+.input-group input,
+.input-group select {
   padding: 12px;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 8px;
+  transition: border-color 0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #6c63ff;
+  outline: none;
 }
 
 .submit-btn {
@@ -139,11 +151,11 @@ export default {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
 .submit-btn:disabled {
-  background-color: #ccc;
+  background-color: #aaa;
   cursor: not-allowed;
 }
 
@@ -153,6 +165,7 @@ export default {
 
 p {
   margin-top: 20px;
+  font-size: 14px;
   color: #555;
 }
 </style>
