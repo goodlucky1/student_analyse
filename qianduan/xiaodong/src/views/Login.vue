@@ -5,11 +5,11 @@
       <form @submit.prevent="handleLogin">
         <div class="input-group">
           <label for="username">用户名</label>
-          <input v-model="username" type="text" id="username" placeholder="请输入用户名" required :disabled="isSubmitting" />
+          <input v-model="username" type="text" id="username" placeholder="请输入用户名" required />
         </div>
         <div class="input-group">
           <label for="password">密码</label>
-          <input v-model="password" type="password" id="password" placeholder="请输入密码" required :disabled="isSubmitting" />
+          <input v-model="password" type="password" id="password" placeholder="请输入密码" required />
         </div>
         <button type="submit" class="submit-btn" :disabled="isSubmitting">登录</button>
       </form>
@@ -25,55 +25,52 @@ import { ElMessage } from 'element-plus';
 
 export default {
   mounted() {
-    document.title = '用户登录'; // 修改页面标题
+    document.title = '用户登录'; 
     document.body.classList.add("global-background");
+  },
+  beforeUnmount() {
+    document.body.classList.remove("global-background");
   },
   data() {
     return {
       username: '',
       password: '',
-      errorMessage: '',  // 用于存储错误信息
-      isSubmitting: false, // 是否正在提交
+      errorMessage: '', 
+      isSubmitting: false, 
     };
   },
   methods: {
     async handleLogin() {
-      // 清空之前的错误信息
       this.errorMessage = '';
-      this.isSubmitting = true; // 设置为提交中，禁用表单
-
-      // 简单的表单验证
+      this.isSubmitting = true;
       if (!this.username || !this.password) {
         this.errorMessage = '用户名和密码不能为空';
         this.isSubmitting = false;
         return;
       }
-
       try {
-        // 发送登录请求到后端
-        const response = await axios.post('http://localhost:3000/api/login', {
+        const res = await axios.post("/api/login", {
           username: this.username,
           password: this.password,
         });
 
-        // 登录成功后的处理
-        if (response.data.success) {
-          ElMessage.success('登录成功');
-          this.$router.push("/home"); // 登录成功跳转到首页
+        if (res.data.result === 'success') {
+          console.log(res);
+          ElMessage.success("登录成功");
+          this.$router.push("/home");
         } else {
-          // 登录失败的处理
-          this.errorMessage = response.data.message || '登录失败，请检查用户名和密码';
+          this.errorMessage = "登录失败，用户名或密码错误";
           ElMessage.error(this.errorMessage);
         }
-      } catch (error) {
-        console.error('登录请求出错：', error);
-        this.errorMessage = '登录请求失败，请稍后再试';
+      } catch (err) {
+        console.error(err);
+        this.errorMessage = "请求失败，请稍后再试";
         ElMessage.error(this.errorMessage);
       } finally {
-        this.isSubmitting = false; // 请求完成，恢复表单
+        this.isSubmitting = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -128,7 +125,7 @@ export default {
   width: 100%;
   padding: 12px;
   font-size: 16px;
-  background-color: #6c63ff;
+  background-color: #4db690d8;
   color: white;
   border: none;
   border-radius: 8px;
@@ -142,7 +139,7 @@ export default {
 }
 
 .submit-btn:hover:enabled {
-  background-color: #5149b2;
+  background-color: #68c5f0c3;
 }
 
 p {
