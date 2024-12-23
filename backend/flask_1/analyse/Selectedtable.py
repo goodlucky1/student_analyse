@@ -1,6 +1,6 @@
 import pymysql
 import hdfs
-from SelectedDatabase.MysqlTool import MysqlTool
+from MysqlTool import MysqlTool
 def f(*args):
     s = ','.join([str(elem) for elem in args])
     print(s)

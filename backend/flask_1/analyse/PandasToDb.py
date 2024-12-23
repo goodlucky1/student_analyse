@@ -2,7 +2,7 @@ import pandas as pd
 import pymysql
 from sqlalchemy import engine, create_engine
 
-from SelectedDatabase.MysqlTool import MysqlTool
+from MysqlTool import MysqlTool
 
 
 class PandasToDb(MysqlTool):

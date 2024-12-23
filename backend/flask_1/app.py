@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.debug=True
 
 #允许跨域
-CORS(app, resources={r"/*": {"origins": "http://localhost:8080", "supports_credentials": True}})
+CORS(app, resources={r"*": {"origins": "*", "supports_credentials": True}})
 
 #app配置信息
 app.config.from_object(flask_config.config)
@@ -33,4 +33,4 @@ def hello_world():  # put application's code here
 
 
 if __name__ == '__main__':
-    app.run(host='10.10.116.21', port=8000)
+    app.run(host='0.0.0.0', port=8000)
