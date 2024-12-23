@@ -1,3 +1,4 @@
+import DataEharts from "@/components/content/dataEharts.vue";
 import FileUpload from "@/components/content/FileUpload.vue";
 import LoginPage from "@/components/content/LoginPage.vue";
 import RegistryPage from "@/components/content/RegistryPage.vue";
@@ -10,7 +11,7 @@ const router= createRouter({
         {
             name:"main",
             path:"/",
-            component:LoginPage
+            component:FileUpload
         },
         {
             name:"login",
@@ -26,6 +27,11 @@ const router= createRouter({
             name:"fileUpload",
             path:"/fileUpload",
             component:FileUpload
+        },
+        {
+            name:"dataEharts",
+            path:"/dataEharts",
+            component:DataEharts
         }
 
     ],

@@ -72,7 +72,7 @@ export default{
         post() {
 
             console.log(this.email)
-            axios.post("api/registry", 
+            axios.post("/api/registry", 
             {email:this.email,username:this.username,password:this.password,userRole:this.userRole},
             {headers:{
                 'Content-Type':'application/json',

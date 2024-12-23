@@ -2,7 +2,11 @@ import pandas as pd
 import pymysql
 from sqlalchemy import engine, create_engine
 
+<<<<<<< HEAD
 from MysqlTool import MysqlTool
+=======
+from analyse.MysqlTool import MysqlTool
+>>>>>>> 38687b2f650abbcbec668ccd5823911306e91b93
 
 
 class PandasToDb(MysqlTool):
@@ -11,7 +15,7 @@ class PandasToDb(MysqlTool):
         self.password = password
         self.hostname = hostname
         self.database = database
-        pass
+
     def pandasTodb(self,df,tablename):
         #pandas存入数据库
         for col in df.columns:
@@ -20,6 +24,10 @@ class PandasToDb(MysqlTool):
         DB_STRING = f'mysql+mysqldb://{self.username}:{self.password}@{self.hostname}/{self.database}?charset=utf8'
         engine = create_engine(DB_STRING)
         df.to_sql(tablename, con=engine, if_exists='replace', index=False)
+    def insertTodb(self,data,database,tablename):
+        values = [f"'{v}'" if isinstance(v, str) else str(v) for v in data.values()]
+        sql = f"insert into {database}.{tablename} ({','.join(data.keys())}) values ({','.join(values)})"
+        super().insertd(sql)
     def altertablename(self,oldname,newname):
         con = pymysql.connect(host=self.hostname,user=self.username,password=self.password,database=self.database)
         conn = con.cursor()
@@ -49,5 +57,3 @@ class PandasToDb(MysqlTool):
 
         return df[[item for item in args]]
 
-if __name__ == '__main__':
-    PandasToDb('root','Password123$','10.10.209.221','studb').showtables()

@@ -2,8 +2,13 @@
     <div class="fileUpload_main">
         <div class="mb-3">
             <label for="formFile" class="form-label">Default file input example</label>
+<<<<<<< HEAD
             <input @change="(event) => handelFileChange(event)" class="form-control" type="file" id="formFile">
             <button type="button" class="btn btn-outline-primary" @click="uploadfile">登录</button>
+=======
+            <input @change="(event)=>handelFileChange(event)" class="form-control" type="file" id="formFile">
+            <button type="button" class="btn btn-outline-primary" @click="uploadfile">上传</button>
+>>>>>>> 38687b2f650abbcbec668ccd5823911306e91b93
         </div>
 
     </div>
@@ -28,6 +33,7 @@
 </template>
 <script>
 import axios from 'axios';
+<<<<<<< HEAD
 import Decimal from 'decimal.js'; 
 export default {
     name: "fileUpload",
@@ -41,6 +47,19 @@ export default {
             sqldict: {
                 text: ''
             },
+=======
+
+export default{
+    name:"fileUpload",
+    data(){
+        return{
+            fileValue:"",
+            data:{
+                "姓名":"123321",
+                "成绩":"321231"
+            }
+            
+>>>>>>> 38687b2f650abbcbec668ccd5823911306e91b93
         }
     },
 
@@ -126,6 +145,7 @@ export default {
             this.fileValue = e.target.files[0]
             console.log(e.target.files)
         },
+<<<<<<< HEAD
         avgclick() {
             console.log(this.getvalue)
             axios.post('http://10.11.241.157:5000/avgmethod', this.getvalue)
@@ -153,12 +173,50 @@ export default {
                     this.hello = res.data
                     //console.log(res.data)
                     // console.log(this.hello.length)
+=======
+        async uploadfile(){
+            if(!this.fileValue){
+
+                axios.post("api/getfile/insert",{
+                    "data":this.data,
+                    "tableName":"1734605430"
+                })
+                .then(res=>{
+                    console.log(res)
+                })
+                .catch(res=>{
+                    console.log(res)
+>>>>>>> 38687b2f650abbcbec668ccd5823911306e91b93
                 })
                     .catch(res => {
                         console.log(res)
                     })
 
 
+<<<<<<< HEAD
+=======
+
+                alert("Please select a file first")
+                return
+            }
+            try{
+                const formData = new FormData();
+                formData.append('file',this.fileValue)
+
+                const request=axios.create({
+                    timeout:100000
+                })
+                
+             await  request.post('/api/getfile',
+                        formData,
+                    {headers:{'content-Type':'multipart/byteranges'}},
+                ).then(res=>{
+                    console.log(res)
+                })
+                .catch(res=>{
+                    console.log(res)
+                })
+>>>>>>> 38687b2f650abbcbec668ccd5823911306e91b93
             }
             catch (error) {
                 console.log(error)

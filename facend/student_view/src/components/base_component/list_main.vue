@@ -4,6 +4,7 @@
         <li><router-link class="list_link" :to="{ name: 'fileUpload' }">文件上传</router-link></li>
         <li><router-link class="list_link" :to="{ name: 'login' }">登录</router-link></li>
         <li><router-link class="list_link" :to="{ name: 'registry' }">注册</router-link></li>
+        <li><router-link class="list_link" :to="{ name: 'dataEharts' }">数据图</router-link></li>
     </ul>
 </template>
 <script>
