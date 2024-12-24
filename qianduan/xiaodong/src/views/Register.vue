@@ -5,15 +5,27 @@
       <form @submit.prevent="handleRegister">
         <div class="input-group">
           <label for="username">用户名</label>
-          <input v-model="username" type="text" id="username" placeholder="请输入用户名" required :disabled="isSubmitting" />
+          <input v-model="username" type="text" id="username" placeholder="请输入用户名" required />
         </div>
         <div class="input-group">
           <label for="password">密码</label>
-          <input v-model="password" type="password" id="password" placeholder="请输入密码" required :disabled="isSubmitting" />
+          <input v-model="password" type="password" id="password" placeholder="请输入密码" required />
         </div>
         <div class="input-group">
           <label for="confirmPassword">确认密码</label>
-          <input v-model="confirmPassword" type="password" id="confirmPassword" placeholder="确认密码" required :disabled="isSubmitting" />
+          <input v-model="confirmPassword" type="password" id="confirmPassword" placeholder="确认密码" required />
+        </div>
+        <div class="input-group">
+          <label for="email">邮箱</label>
+          <input v-model="email" type="email" id="email" placeholder="请输入邮箱" required />
+        </div>
+        <div class="input-group">
+          <label for="userRole">用户类型</label>
+          <select id="userRole" v-model="userRole" :disabled="isSubmitting">
+            <option value="管理员">管理员</option>
+            <option value="普通用户">普通用户</option>
+            <option value="未知用户">未知用户</option>
+          </select>
         </div>
         <button type="submit" class="submit-btn" :disabled="isSubmitting">注册</button>
       </form>
@@ -24,15 +36,14 @@
 
 <script>
 import axios from 'axios';
-import { ElMessage } from 'element-plus'; 
+import { ElMessage } from 'element-plus';
 
 export default {
   mounted() {
-    // 设置全局背景
+    document.title = '用户注册';
     document.body.classList.add("global-background");
   },
-  beforeDestroy() {
-    // 清除全局背景样式
+  beforeUnmount() {
     document.body.classList.remove("global-background");
   },
   data() {
@@ -40,43 +51,39 @@ export default {
       username: '',
       password: '',
       confirmPassword: '',
-      isSubmitting: false, // 是否正在提交
+      email: '',
+      userRole: '普通用户', 
+      isSubmitting: false, 
     };
   },
   methods: {
     async handleRegister() {
-      // 检查是否有空字段
-      if (!this.username || !this.password || !this.confirmPassword) {
-        ElMessage.error('用户名、密码或确认密码不能为空');
-        return;
-      }
-      // 检查密码是否匹配
       if (this.password !== this.confirmPassword) {
-        ElMessage.error('密码不匹配！');
+        ElMessage.error("两次密码不一致");
         return;
       }
-
-      this.isSubmitting = true; // 设置为提交中，禁用表单
+      this.isSubmitting = true; 
 
       try {
-        // 发送注册请求到后端
-        const response = await axios.post('http://localhost:3000/api/register', {
+        const res = await axios.post("/api/registry", {
           username: this.username,
           password: this.password,
+          email: this.email,
+          userRole: this.userRole,
         });
 
-        // 注册成功后的处理
-        if (response.data.success) {
-          ElMessage.success('注册成功！');
-          this.$router.push('/'); // 跳转到登录页面
+        if (res.data.result === "success") {
+          console.log(res);
+          ElMessage.success("注册成功");
+          this.$router.push("/"); 
         } else {
-          ElMessage.error('注册失败：' + response.data.message);
+          ElMessage.error("注册失败，请重试");
         }
       } catch (error) {
-        console.error('注册请求出错：', error);
-        ElMessage.error('注册失败，请稍后再试');
+        console.error(error);
+        ElMessage.error("网络错误，请稍后再试");
       } finally {
-        this.isSubmitting = false; // 请求完成，恢复表单
+        this.isSubmitting = false;
       }
     },
   },
@@ -84,7 +91,6 @@ export default {
 </script>
 
 <style scoped>
-/* 居中容器 */
 .auth-container {
   display: flex;
   justify-content: center;
@@ -92,12 +98,11 @@ export default {
   height: 100vh;
 }
 
-/* 表单框样式 */
 .form-box {
   width: 90%;
   max-width: 400px;
   padding: 30px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 15px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   text-align: center;
@@ -113,16 +118,17 @@ export default {
 .input-group {
   margin-bottom: 20px;
   display: flex;
-  align-items: center; /* 垂直居中对齐 */
+  align-items: center;
 }
 
 .input-group label {
   width: 100px;
   text-align: right;
-  margin-right: 15px; /* 标签和输入框之间的间距 */
+  margin-right: 15px; 
 }
 
-.input-group input {
+.input-group input,
+.input-group select {
   width: 100%;
   padding: 12px;
   font-size: 16px;
@@ -134,7 +140,7 @@ export default {
   width: 100%;
   padding: 12px;
   font-size: 16px;
-  background-color: #6c63ff;
+  background-color: #4db690d8;
   color: white;
   border: none;
   border-radius: 8px;
@@ -148,11 +154,17 @@ export default {
 }
 
 .submit-btn:hover:enabled {
-  background-color: #5149b2;
+  background-color: #68c5f0c3;
 }
 
 p {
   margin-top: 20px;
   color: #555;
+}
+
+.error-message {
+  color: #f56c6c;
+  margin-top: 15px;
+  font-size: 14px;
 }
 </style>

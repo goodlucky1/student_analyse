@@ -1,5 +1,8 @@
 import json
+<<<<<<< HEAD
+=======
 import time
+>>>>>>> 38687b2f650abbcbec668ccd5823911306e91b93
 
 from flask import Blueprint,request
 import openpyxl
@@ -7,6 +10,8 @@ import pandas as pd
 from sqlalchemy.orm.sync import update
 
 from flask_dbobject.dbobject import db
+from sparkproject.pandastojson import *
+
 bp = Blueprint('getfile', __name__,url_prefix='/getfile')
 
 
@@ -14,9 +19,16 @@ bp = Blueprint('getfile', __name__,url_prefix='/getfile')
 @bp.route('/',methods=['GET','POST'])
 def getfile():
     if request.method == 'GET':
-        return "success"
+        pass
+        # return "success"
     elif request.method == 'POST':
         res= request.files.getlist("file")
+<<<<<<< HEAD
+        for file in res:
+            df = pd.read_excel(file)
+            pandastodb(df,'10.10.209.221','root','Password123$','studb')
+            return json.dumps(pandastojson(df),ensure_ascii=False,indent=4)
+=======
         df = pd.read_excel(res[0])
 
         from buleprints.analyse.tableData import createdf
@@ -145,5 +157,10 @@ def delete():
     }
     return data2
 
+>>>>>>> 38687b2f650abbcbec668ccd5823911306e91b93
 
 
+<<<<<<< HEAD
+        # return "success"
+=======
+>>>>>>> 38687b2f650abbcbec668ccd5823911306e91b93

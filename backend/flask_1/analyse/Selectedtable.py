@@ -1,6 +1,15 @@
 import pymysql
+<<<<<<< HEAD
+import hdfs
+from MysqlTool import MysqlTool
+def f(*args):
+    s = ','.join([str(elem) for elem in args])
+    print(s)
+f('id','name')
+=======
 
 from analyse.MysqlTool import MysqlTool
+>>>>>>> 38687b2f650abbcbec668ccd5823911306e91b93
 
 class SelectedTable(MysqlTool):
     def __init__(self,hostname,username,password):

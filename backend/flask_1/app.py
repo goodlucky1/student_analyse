@@ -15,7 +15,11 @@ app = Flask(__name__)
 app.debug=True
 
 #允许跨域
+<<<<<<< HEAD
+CORS(app, resources={r"*": {"origins": "*", "supports_credentials": True}})
+=======
 CORS(app, resources={r"/*": {"origins": "*", "supports_credentials": True}})
+>>>>>>> 38687b2f650abbcbec668ccd5823911306e91b93
 
 #app配置信息
 app.config.from_object(flask_config.config)

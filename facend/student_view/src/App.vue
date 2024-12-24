@@ -5,6 +5,8 @@
 
 <script>
 import base1 from './components/base/base1.vue';
+import axios from 'axios';
+
 
 
 export default {
@@ -13,6 +15,10 @@ export default {
     base1
   }
 }
+
+
+axios.get('api')
+.then(x=>{console.log(x)})
 </script>
 
 <style>
