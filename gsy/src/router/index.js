@@ -1,13 +1,17 @@
 import CourseCpn from "@/components/CourseCpn.vue";
-import HomeCpn from "@/components/HomeCpn.vue";
+import HomeCpnr from "@/components/dzy/views/HomeCpnr.vue";
 import IndexCpn from "@/components/IndexCpn.vue";
 import InfoCpn from "@/components/InfoCpn.vue";
-import LoginCpn from "@/components/LoginCpn.vue";
 import MyContent from "@/components/MyContent.vue";
 import MyMenu from "@/components/MyMenu.vue";
 import ScoreCpn from "@/components/ScoreCpn.vue";
+import LoginEdge from "@/components/wjx/views/LoginEdge.vue";
+import RegisteCpnr from "@/components/wjx/views/RegisteCpnr.vue";
 
 import { createRouter,createWebHashHistory } from "vue-router";
+
+
+   
 
 const routes=[
     {
@@ -18,7 +22,7 @@ const routes=[
             {
                 path:"/home",
                 name:"home",
-                component:HomeCpn
+                component:HomeCpnr
             },
             {
                 path:"/info",
@@ -47,7 +51,7 @@ const routes=[
     },
     {
         path:"/",
-        redirect:"/index",
+        redirect:"/login",
        
     },
     {
@@ -57,7 +61,12 @@ const routes=[
     },
     {
         path:"/login",
-        component:LoginCpn
+        component:LoginEdge,
+        
+    },
+    {
+        path:"/register",
+        component:RegisteCpnr
     }
 
 ]
@@ -68,5 +77,7 @@ const router=createRouter({
     history:createWebHashHistory(),
     routes,
 })
+
+
 
 export default router

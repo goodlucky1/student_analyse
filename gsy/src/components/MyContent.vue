@@ -1,4 +1,5 @@
 <template>
+  <div class="contain">
     <div class="header">
       <div class="icon">
         <el-icon v-if="isClose" @click="change"><Expand /></el-icon>
@@ -15,7 +16,7 @@
         </div>
       </div>
     </div>
-    
+  </div>
   <div class="wrapper">
     <router-view></router-view>
   </div>
@@ -56,12 +57,18 @@ export default{
 </script>
 
 <style lang="less" scoped>
+.contain{
+  display:flex ;
+  flex-direction: column;
+  
+}
 .header{
     height: 50px;
     line-height: 50px;
     background-color: #1e78bf;
     color: #fff;
     display: flex;
+    
     .icon{
       font-size: 24px;
       flex: 1;
@@ -87,6 +94,10 @@ export default{
     }
     }
 .wrapper{
-    margin: 10px;
+    padding-top: 20px;
+    background-color: gainsboro;
+    margin: 20px 20px 20px 20px;
+    flex:1;
    }
+   
 </style>

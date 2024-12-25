@@ -8,7 +8,7 @@
         :disabled="!selectedRows.length"
         @click="deleteSelectedRows"
       >
-        删除选中
+        删除
       </button>
       <div class="search-box">
         <input
@@ -16,7 +16,7 @@
           v-model="searchQuery"
           placeholder="请输入搜索内容"
         />
-        <button class="btn btn-rounded btn-secondary" @click="searchData">
+        <button class="btn btn-rounded btn-secondary" @click="searchData" id="select">
           搜索
         </button>
       </div>
@@ -35,6 +35,7 @@
           </th>
           <th v-for="(col, index) in columns" :key="index">{{ col }}</th>
           <th>操作</th>
+          <th>生成图</th>
         </tr>
       </thead>
       <tbody>
@@ -49,18 +50,19 @@
             <input
               type="checkbox"
               :value="row"
-              @change="toggleRowSelection(row['序号'])"
-              :checked="selectedRows.includes(row['序号'])"
+              @change="toggleRowSelection(row[union])"
+              :checked="selectedRows.includes(row[union])"
             />
           </td>
           <td v-for="(col, colIndex) in columns" :key="colIndex">
             {{ row[col] }}
           </td>
           <td>
-            <button class="btn btn-rounded btn-info" @click="openEditDialog(row)">
+            <button class="btn btn-rounded btn-info" @click="openEditDialog(row)" id="update">
               更改
             </button>
           </td>
+         
           <td>
   <button class="btn btn-rounded btn-success" @click="generateLineChart(row)">
     折线图
@@ -88,10 +90,11 @@
         <input
           type="number"
           v-model.number="jumpPage"
-          @keydown.enter="jumpToPage"
+          @keyup.enter="jumpToPage"
           min="1"
           :max="totalPages"
           placeholder="跳转页"
+          writable: true
         />
         <button
           class="btn btn-rounded btn-secondary"
@@ -161,8 +164,10 @@
 
 <script>
 import { request } from '@/api';
-import LineChart from "@/components/LineChart.vue";
-import RadarChart from "@/components/RadarChart.vue";
+// import LineChart from "@/components/LineChart.vue";
+// import RadarChart from "@/components/RadarChart.vue";
+import LineChart from './LineChart.vue';
+import RadarChart from './RadarChart.vue';
 
 /* global layer */
 export default {
@@ -204,7 +209,9 @@ components:{
 
       },
 
-      union:"姓名"
+      union:"姓名",
+      
+
     };
   },
   computed: {
@@ -233,9 +240,10 @@ components:{
   methods: {
     async getData(start){
 
-      let data2=null
+      let data_revise=null
 
-      await request.post("getfile/select",
+      if(this.mode!="search"){
+        await request.post("getfile/select",
           {
             start:start,
             size:"10",
@@ -243,18 +251,24 @@ components:{
           }
         ).then(res=>{
             layer.msg('成功', {icon: 1});
-            console.log(res)
           
-            data2=res.data.data
-
+            data_revise=res
           })
           .catch(res=>{
-            console.log(res)
             layer.msg('失败', {icon: 2});
           })
+          
 
-      if(data2!=null)
-           this.$emit("select",data2)
+          if(data_revise!=null)
+          //  this.$emit("select2",data_revise)
+           this.$emit("select4",data_revise.data.data,data_revise.data.lines[0]["count(*)"],this.tableName)
+      }
+      else{
+        this.searchData()
+      }
+      
+          // eslint-disable-next-line no-debugger
+      
     },
     generateLineChart(row) {
       const labels = this.columns;
@@ -298,22 +312,7 @@ components:{
       this.showChartDialog = false;
     },
     
-    RequestWeb(start,size){
-      request.post("getfile",{
-        start,
-        size
-      })
-      .then(res=>{
-        console.log(res)
-      })
-      .catch(res=>{
-        console.log(res)
-      })
-
-
-      
-    }
-    ,
+    
     openAddDialog() {
       this.editRow = this.columns.reduce((acc, col) => ({ ...acc, [col]: "" }), {});
       this.showAddDialog = true;
@@ -333,11 +332,10 @@ components:{
         tableName:this.tableName
       })
       .then(res=>{
-        console.log(res)
         layer.msg('成功', {icon: 1});
+        this.changePage(this.currentPage)
       })
       .catch(res=>{
-        console.log(res)
         layer.msg('失败', {icon: 2});
       })
 
@@ -351,12 +349,17 @@ components:{
     },
     saveRowChanges() {
 
-      request.post("getfile",this.editRow)
+      request.post("getfile/update",{
+        data:this.editRow,
+        tableName:this.tableName,
+        union:this.union
+      })
       .then(res=>{
-        console.log(res)
+        layer.msg('成功', {icon: 1});
+        this.changePage(this.currentPage)
       })
       .catch(res=>{
-        console.log(res)
+        layer.msg('失败', {icon: 2});
       })
 
   // 确保每行都有唯一标识符（如 id）以便准确定位
@@ -375,37 +378,78 @@ components:{
 },
 
     deleteSelectedRows() {
-      request.post("/file",this.selectedRows)
+      request.post("getfile/delete",{
+        data:this.selectedRows,
+        tableName:this.tableName,
+        union:this.union
+      })
       .then(res=>{
-        console.log(res)
+        layer.msg('成功', {icon: 1});
+        this.$emit("select3");
       })
       .catch(res=>{
-        console.log(res)
+        layer.msg('失败', {icon: 2});
       })
 
 
-      const newData = this.data.filter((row) => !this.selectedRows.includes(row));
-      this.$emit("update-data", newData);
+      // const newData = this.data.filter((row) => !this.selectedRows.includes(row));
+      // this.$emit("update-data", newData);
+
       this.selectedRows = [];
-      this.totalItems = newData.length;
-      this.updateTotalPages();
+      // this.totalItems = newData.length;
+      // this.updateTotalPages();
     },
     searchData() {
       const lowerQuery = this.searchQuery.toLowerCase();
-      const filteredData = this.originalData.filter((row) =>
-        this.columns.some((col) =>
-          String(row[col]).toLowerCase().includes(lowerQuery)
-        )
-      );
-      if (filteredData.length > 0) {
-        this.$emit("update-data", filteredData);
-        this.currentPage = 1;
-      } else {
-        alert("未找到相关内容！");
-      }
+      // const filteredData = this.originalData.filter((row) =>
+      //   this.columns.some((col) =>
+      //     String(row[col]).toLowerCase().includes(lowerQuery)
+      //   )
+      // );
+      // if (filteredData.length > 0) {
+      //   this.$emit("update-data", filteredData);
+      //   this.currentPage = 1;
+      // } else {
+      //   alert("未找到相关内容！");
+      // }
+
+
+      request.post("getfile/selectByWhere",
+        {
+          tableName:this.tableName,
+          where:lowerQuery
+        }
+      ).then(res=>{
+        layer.msg('成功', {icon: 1});
+        let len=res.data.length+1
+        if(this.currentPage>=Math.ceil(this.totalItems / this.pageSize)){
+          this.currentPage=1
+        }  
+        if(len==1){
+          layer.msg('未找到内容', {icon: 1});
+          return
+        }
+
+        let tempdata=[]
+        for(let p=(this.currentPage-1)* this.pageSize;p<(len-1)&&p<this.currentPage*this.pageSize;p++){
+          tempdata.push(res.data[p])
+        }
+
+        this.mode="search"
+        if(lowerQuery=="")
+          this.mode=""
+
+        this.$emit("select4",tempdata,len,this.tableName)
+      })
+      .catch(res=>{
+        layer.msg('失败', {icon: 2});
+      })
+
+
     },
     changePage(page) {
       this.currentPage = page;
+      this.jumpPage=page;
 
       const start = (this.currentPage - 1) * this.pageSize;
 
@@ -416,7 +460,11 @@ components:{
         this.currentPage = this.jumpPage;
       } else {
         alert(`请输入 1 到 ${this.totalPages} 之间的页码`);
+        return
       }
+
+      this.changePage(this.jumpPage)
+      
     },
     toggleRowSelection(row) {
       const index = this.selectedRows.indexOf(row);
@@ -428,7 +476,7 @@ components:{
     },
     toggleAllRowsSelection(event) {
       if (event.target.checked) {
-        this.selectedRows = this.pagedData.map(data=>data['序号'])
+        this.selectedRows = this.pagedData.map(data=>data[this.union])
       } else {
         this.selectedRows = [];
       }
@@ -443,7 +491,10 @@ components:{
 };
 </script>
 
-<style scoped>
+<style >
+*{
+    font-family: Arial, sans-serif;
+}
 .table-header {
   display: flex;
   justify-content: space-between;
@@ -495,12 +546,19 @@ components:{
   margin-left: 10px;
 }
 .btn-success {
-  background-color: #28a745;
+  background-color: #a3a0e4;
+  font-family: Arial, sans-serif;
   color: white;
+  border-color: #a3a0e4;
+  
+  margin-bottom: 5px;
 }
 .btn-warning {
-  background-color: #ffc107;
-  color: black;
+  background-color: #7ec9e0;
+  border-color: #7ec9e0;
+ 
+  color: white;
+  font-family: Arial, sans-serif;
 }
 .dialog-overlay {
   position: fixed;
@@ -540,5 +598,138 @@ components:{
 
 .dialog-actions button {
   margin-left: 10px;
+}
+#update{
+  background-color: #c783b6;
+  border: 1px solid #c783b6;
+  color: white;
+}
+#select{
+  background-color: #c0f5df;
+  background-color: #c783b6;
+  border: 1px solid #c783b6;
+  color: white;
+}
+</style>
+
+
+<style scoped>
+*{
+    font-family: Arial, sans-serif;
+}
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.search-box {
+  display: flex;
+  align-items: center;
+}
+.search-box input {
+  margin-right: 10px;
+}
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dialog {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 100%;
+}
+.input-group {
+  margin-bottom: 15px;
+}
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+.input-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.dialog-actions {
+  text-align: right;
+}
+.dialog-actions button {
+  margin-left: 10px;
+}
+.btn-success {
+  background-color: #a3a0e4;
+  font-family: Arial, sans-serif;
+  color: white;
+  border-color: #a3a0e4;
+  
+  margin-bottom: 5px;
+}
+.btn-warning {
+  background-color: #7ec9e0;
+  border-color: #7ec9e0;
+ 
+  color: white;
+  font-family: Arial, sans-serif;
+}
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 80%; /* 宽度改为80% */
+  max-width: 1200px; /* 最大宽度限制 */
+  height: 80%; /* 高度改为80% */
+  overflow-y: auto; /* 若内容过多，允许滚动 */
+}
+
+.dialog h3 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.dialog-actions button {
+  margin-left: 10px;
+}
+#update{
+  background-color: #c783b6;
+  border: 1px solid #c783b6;
+  color: white;
+}
+#select{
+  background-color: #c0f5df;
+  background-color: #c783b6;
+  border: 1px solid #c783b6;
+  color: white;
 }
 </style>

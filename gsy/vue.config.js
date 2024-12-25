@@ -13,5 +13,17 @@ module.exports = defineConfig({
         resolvers: [ElementPlusResolver()],
       }),
     ],
+  },
+  devServer: {
+    proxy: {
+      "api": {
+        target: "http://10.10.116.210:8000",
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
+      }
+    }
   }
 })

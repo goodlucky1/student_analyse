@@ -1,10 +1,13 @@
 <template>
+<div class="contain">
   <div class="menu">
     <MyMenu :isClose="isClose"></MyMenu>
+   
   </div>
   <div class="content" :class="{active:isClose}">
     <MyContent :isClose="isClose" @change="change"></MyContent>
   </div>
+</div>
 </template>
 
 <script >
@@ -12,10 +15,14 @@ import { ref } from 'vue';
 import MyContent from './MyContent.vue';
 import MyMenu from './MyMenu.vue';
 
+
+
+
 export default{
     components:{
         MyContent,
-        MyMenu
+        MyMenu,
+        
     },
     setup(){
         //定义变量
@@ -44,9 +51,12 @@ export default{
     }
     .content{
         padding-left:200px ;
+       
+       
     }
     .active{
         padding-left: 64px;
     }
+   
 </style>
     
