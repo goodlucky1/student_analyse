@@ -9,7 +9,6 @@
       <button class="btn btn-primary" @click="uploadFile" :disabled="!fileData">上传</button>
     </div>
   </template>
-  
   <script>
   import { request } from '@/api'; // 假设你有一个请求模块
   /* global layer */
@@ -24,10 +23,6 @@
     },
    
     methods: {
-      test3(){
-        console.log("exe")
-      }
-      ,
       handleFileUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -48,13 +43,11 @@
           formData
         )
         .then(res=>{
-          console.log(res)
           this.tableName=res.data.tableName
           issuccessful=true
           layer.msg('成功', {icon: 1});
         })
         .catch(res=>{
-          console.log(res)
           layer.msg('失败', {icon: 2});
         })
 
@@ -72,13 +65,11 @@
           }
         ).then(res=>{
             layer.msg('成功', {icon: 1});
-            console.log(res)
           
             this.$emit("file-loaded",res.data.data,res.data.lines[0]["count(*)"],this.tableName)
 
           })
           .catch(res=>{
-            console.log(res)
             layer.msg('失败', {icon: 2});
           })
       }

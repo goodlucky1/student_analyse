@@ -10,7 +10,7 @@
       
       <!-- 数据表格组件 -->
       <div class="table-responsive">
-        <DataTable :tableName="tableName"  :lines="lines"  :data="tableData" @delete-row="confirmDeleteRow"  @select="loadExcelData2" />
+        <DataTable :tableName="tableName"  :lines="lines"  :data="tableData" @delete-row="confirmDeleteRow" @select4="loadExcelData"  @select3="getTableData"  @select2="loadExcelData2" />
       </div>
     </div>
   </template>
@@ -18,6 +18,7 @@
   <script>
   import ExcelImport from '../components/ExcelImport.vue';
   import DataTable from '../components/DataTable.vue';
+import { request } from '@/api';
 
 
   export default {
@@ -31,12 +32,25 @@
       };
     },
     methods: {
-      test2(){
-        console.log(this.$refs.excelImport)
-      },
       updateTableData(newData) {
       this.data = newData;
     },
+    async getTableData(){
+        await request.post("getfile/select",
+          {
+            start:"0",
+            size:"10",
+            tableName:this.tableName
+          }
+        ).then(res=>{
+            layer.msg('成功', {icon: 1});
+          
+            this.loadExcelData(res.data.data,res.data.lines[0]["count(*)"],this.tableName)
+          })
+          .catch(res=>{ 
+            layer.msg('失败', {icon: 2});
+          })
+      },
       // 处理 Excel 文件上传并加载数据
       loadExcelData(data,lines2,tableName) {
 
@@ -52,6 +66,8 @@
 
       },
       loadExcelData2(data){
+        try{
+
         for(let item in data){
           for(let item2 in data[item]){
             data[item][item2]=data[item][item2].replace("nan","")
@@ -59,6 +75,9 @@
         }
 
         this.tableData=data
+        }
+        catch(e){
+        }
       },
      
   
